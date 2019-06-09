@@ -17,19 +17,19 @@ output: ROI, represented by four points
 */
 int main()
 {
-    const string img_load_base = "/home/yjy/dataset/palmprint_dectection/LHand/palmvein/";
-    const string fg_load_base = "/home/yjy/PycharmProjects/firstAI/Finger_roots_Eager/datasets/LHand/palmprint_trainval/";
-    const string roi_save_base = "/home/yjy/PycharmProjects/firstAI/Finger_roots_Eager/datasets/LHand/palmprint_trainval/";
+    const string img_load_base = "/home/yjy/PycharmProjects/Finger_root_Eager/datasets/LHand/palmprint_trainval/";
+    const string fg_load_base = "/home/yjy/dataset/palmprint_dectection/LHand/txt_data/Figcon/";
+    const string roi_save_base = "/home/yjy/dataset/palmprint_dectection/LHand/txt_data/ROI_with_bias/";
     const string img_save_base = "/home/yjy/dataset/palmprint_dectection/LHand/palmvein_ROI/";
     cv::Mat img;
     const int pt_num = 4;
-    const int ROI_size = 224;
+    const int ROI_size = 196;
     char buff[100000];
     char out_buff[1000];
     int finger_roots[6] = {0};
 
-    ifstream txt(fg_load_base + "figCon_nn.txt"); //"figCon.txt"
-    ofstream txt_roi(fg_load_base + "ROI.txt");
+    ifstream txt(fg_load_base + "figCon_nn-rotate.txt"); //"figCon_tra.txt"
+    ofstream txt_roi(roi_save_base + "ROI_palmvein_nnFinger-rotate.txt");
     txt.read(buff, 100000);
     string figCon(buff);
     string outrow = "";
@@ -49,7 +49,7 @@ int main()
 
         try
         {
-            img = cv::imread(img_load_base + filename);
+            img = cv::imread(img_load_base + filename + ".jpg");
         }
         catch (const std::exception &e)
         {

@@ -29,7 +29,7 @@ cv::Point **ROIExtracter::extract(int roi_size)
     // int i = 1;
     // const int *const j = &i;
     // const int *const *p = &j;
-
+    const int bias = 32;
     cv::Point **result = new cv::Point *[1];
     result[0] = new cv::Point[4];
     cv::Mat A = cv::Mat::zeros(cv::Size2d(2, 2), CV_32F);
@@ -51,8 +51,10 @@ cv::Point **ROIExtracter::extract(int roi_size)
     B.at<float>(0, 1) = roi_size / 2.0;
     B.at<float>(0, 2) = -roi_size / 2.0;
     B.at<float>(0, 3) = -roi_size / 2.0;
-    B.at<float>(1, 1) = roi_size;
-    B.at<float>(1, 2) = roi_size;
+    B.at<float>(1, 0) = 0 + bias;
+    B.at<float>(1, 1) = roi_size + bias;
+    B.at<float>(1, 2) = roi_size + bias;
+    B.at<float>(1, 3) = 0 + bias;
 
     C.at<float>(0, 0) = (a + c) / 2;
     C.at<float>(0, 1) = (a + c) / 2;
