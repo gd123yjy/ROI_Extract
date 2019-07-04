@@ -15,22 +15,22 @@ vector<string> split(const string &str, const string &delim);
 input: fingers coordinates
 output: ROI, represented by four points
 */
-int main()
+int main(int argc, char *argv[])
 {
-    const string img_load_base = "/home/yjy/PycharmProjects/Finger_root_Eager/datasets/LHand/palmprint_trainval/";
-    const string fg_load_base = "/home/yjy/dataset/palmprint_dectection/LHand/txt_data/Figcon/";
-    const string roi_save_base = "/home/yjy/dataset/palmprint_dectection/LHand/txt_data/ROI_with_bias/";
-    const string img_save_base = "/home/yjy/dataset/palmprint_dectection/LHand/palmvein_ROI/";
+    const string img_load_base = argv[1]; //"/home/yjy/PycharmProjects/Finger_root_Eager/datasets/LHand/palmprint_trainval/";
+    const string fg_load_path = argv[2];
+    const string roi_save_path = argv[3];
+    const string img_save_base = argv[4]; //"/home/yjy/dataset/palmprint_dectection/LHand/palmvein_ROI/";
     cv::Mat img;
     const int pt_num = 4;
-    const int ROI_size = 196;
-    char buff[100000];
+    const int ROI_size = 212;
+    char buff[200000];
     char out_buff[1000];
     int finger_roots[6] = {0};
 
-    ifstream txt(fg_load_base + "figCon_nn-rotate.txt"); //"figCon_tra.txt"
-    ofstream txt_roi(roi_save_base + "ROI_palmvein_nnFinger-rotate.txt");
-    txt.read(buff, 100000);
+    ifstream txt(fg_load_path);      //"/home/yjy/dataset/palmprint_dectection/LHand/txt_data/Figcon/figCon_tra.txt"
+    ofstream txt_roi(roi_save_path); //"/home/yjy/dataset/palmprint_dectection/LHand/txt_data/ROI_with_bias/ROI_palmvein_xxFinger-xxx.txt"
+    txt.read(buff, 200000);
     string figCon(buff);
     string outrow = "";
     vector<string>
@@ -40,7 +40,7 @@ int main()
     {
         string row = rows[i];
         vector<string> data = split(row, " ");
-        string filename = data[0].substr(0, 17);
+        string filename = data[0]; //.substr(0, 17);
         for (int j = 0; j < 6; j++)
         {
             finger_roots[j] = stoi(data[j + 1]);
@@ -49,7 +49,7 @@ int main()
 
         try
         {
-            img = cv::imread(img_load_base + filename + ".jpg");
+            img = cv::imread(img_load_base + filename);
         }
         catch (const std::exception &e)
         {
@@ -59,7 +59,7 @@ int main()
 
         const cv::Point *const *result = roie.extract(ROI_size);
         cv::polylines(img, result, &pt_num, 1, true, cv::Scalar(0, 255, 0));
-        cv::imwrite(img_save_base + filename + ".jpg", img);
+        cv::imwrite(img_save_base + filename, img);
 
         sprintf(out_buff, "%s %d %d %d %d %d %d %d %d\n", filename.c_str(), result[0][0].x, result[0][0].y, result[0][1].x, result[0][1].y, result[0][2].x, result[0][2].y, result[0][3].x, result[0][3].y);
         txt_roi << out_buff;
